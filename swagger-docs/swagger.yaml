@@ -394,7 +394,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/DepartureModel'
+                  $ref: '#/components/schemas/AlertModel'
 components:
   schemas:
     TripModel:
