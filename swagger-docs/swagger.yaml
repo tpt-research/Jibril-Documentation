@@ -1,0 +1,1023 @@
+openapi: 3.0.0
+info:
+  title: The Public Transport API
+  description: This is the API of The Public Transport. It's open for everyone and
+    does not need any APIKey or has any limits.
+  contact:
+    email: tristan@sqrls.de
+  license:
+    name: CC-BY-SA-4.0
+    url: https://creativecommons.org/licenses/by-sa/4.0/
+  version: 1.0.0
+servers:
+- url: https://thepublictransport.de
+  description: The Public Transport server
+tags:
+- name: TPTService
+  description: Operations for the main service (TPTService)
+paths:
+  /departure:
+    get:
+      tags:
+      - TPTService
+      summary: get current departures
+      description: By passing a station ID to the endpoint, you get the newest departures.
+      operationId: getDepartures
+      parameters:
+      - name: query
+        in: query
+        description: passes a Station ID to get results
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: hourshift
+        in: query
+        description: shifts current time by x hours
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: limit
+        in: query
+        description: maximum number of departures to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      - name: equiv
+        in: query
+        description: look for equivalent stations with departures
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+          default: false
+      - name: source
+        in: query
+        description: set your data source
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: Rt
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DepartureModel'
+  /location/suggest:
+    get:
+      tags:
+      - TPTService
+      summary: suggest locations based on query
+      description: By passing a value to the query, you will get a list of locations
+      operationId: suggestLocations
+      parameters:
+      - name: q
+        in: query
+        description: passes a string to query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: types
+        in: query
+        description: set type of location
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: ALL
+      - name: maxLocations
+        in: query
+        description: maximum number of locations to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 25
+      - name: source
+        in: query
+        description: set your data source
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: Rt
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationModel'
+  /location/nearby:
+    get:
+      tags:
+      - TPTService
+      summary: suggest locations based on geocoords
+      description: By passing geocoords, you will get a list of locations
+      operationId: nearbyLocations
+      parameters:
+      - name: lat
+        in: query
+        description: passes latitude to the service
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: lon
+        in: query
+        description: passes longitude to the service
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: types
+        in: query
+        description: set type of location
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: ALL
+      - name: maxLocations
+        in: query
+        description: maximum number of locations to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 100
+      - name: maxDistance
+        in: query
+        description: maximum number of locations to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+          default: 5000
+      - name: source
+        in: query
+        description: set your data source
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: Rt
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocationModel'
+  /trips/name:
+    get:
+      tags:
+      - TPTService
+      summary: get a trip based on two names
+      description: By passing two names, you will get a trip based on it
+      operationId: tripName
+      parameters:
+      - name: from
+        in: query
+        description: passes a name as beginning of your trip
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: passes a name as end of your trip
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: when
+        in: query
+        description: passes a date to your trip
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: dd.MM.yyyy'T'HH:mm:ss
+      - name: products
+        in: query
+        description: set type of location
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: ALL
+      - name: accessibility
+        in: query
+        description: set the accessibility mode to filter by barrier free stations
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: NEUTRAL
+      - name: optimization
+        in: query
+        description: optimize your trip by different needs
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: LEAST_DURATION
+      - name: walkspeed
+        in: query
+        description: set how fast the user can walk to next station
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: NORMAL
+      - name: source
+        in: query
+        description: set your data source
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: Rt
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TripModel'
+  /trips/id:
+    get:
+      tags:
+      - TPTService
+      summary: get a trip based on two ids
+      description: By passing two ids, you will get a trip based on it
+      operationId: tripId
+      parameters:
+      - name: from
+        in: query
+        description: passes an id as beginning of your trip
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: to
+        in: query
+        description: passes an id as end of your trip
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: when
+        in: query
+        description: passes a date to your trip
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: dd.MM.yyyy'T'HH:mm:ss
+      - name: products
+        in: query
+        description: set type of location
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: ALL
+      - name: accessibility
+        in: query
+        description: set the accessibility mode to filter by barrier free stations
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: NEUTRAL
+      - name: optimization
+        in: query
+        description: optimize your trip by different needs
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: LEAST_DURATION
+      - name: walkspeed
+        in: query
+        description: set how fast the user can walk to next station
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: NORMAL
+      - name: source
+        in: query
+        description: set your data source
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          default: Rt
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TripModel'
+components:
+  schemas:
+    TripModel:
+      required:
+      - context
+      - from
+      - header
+      - status
+      - to
+      - trips
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/TripModel_header'
+        status:
+          type: string
+        from:
+          $ref: '#/components/schemas/TripModel_from'
+        to:
+          $ref: '#/components/schemas/TripModel_from'
+        context:
+          $ref: '#/components/schemas/TripModel_context'
+        trips:
+          type: array
+          items:
+            $ref: '#/components/schemas/TripModel_trips'
+    LocationModel:
+      required:
+      - header
+      - locations
+      - status
+      - suggestedLocations
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/TripModel_header'
+        status:
+          type: string
+        suggestedLocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationModel_suggestedLocations'
+        locations:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocationModel_locations'
+    DepartureModel:
+      required:
+      - header
+      - stationDepartures
+      - status
+      type: object
+      properties:
+        header:
+          $ref: '#/components/schemas/TripModel_header'
+        status:
+          type: string
+        stationDepartures:
+          type: array
+          items:
+            $ref: '#/components/schemas/DepartureModel_stationDepartures'
+    TripModel_header:
+      required:
+      - context
+      - network
+      - serverName
+      - serverProduct
+      - serverTime
+      - serverVersion
+      type: object
+      properties:
+        network:
+          type: string
+        serverProduct:
+          type: string
+        serverVersion:
+          type: string
+        serverTime:
+          type: number
+    TripModel_from:
+      required:
+      - coord
+      - id
+      - identified
+      - latAs1E6
+      - latAsDouble
+      - lonAs1E6
+      - lonAsDouble
+      - name
+      - place
+      - products
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        lonAs1E6:
+          type: number
+        latAs1E6:
+          type: number
+        identified:
+          type: boolean
+        latAsDouble:
+          type: number
+        lonAsDouble:
+          type: number
+    TripModel_context:
+      required:
+      - date
+      - dep
+      - earlierContext
+      - from
+      - laterContext
+      - products
+      - to
+      - via
+      - walkSpeed
+      type: object
+      properties:
+        from:
+          $ref: '#/components/schemas/TripModel_from'
+        to:
+          $ref: '#/components/schemas/TripModel_from'
+        date:
+          type: number
+        dep:
+          type: boolean
+        products:
+          type: array
+          items:
+            type: string
+        walkSpeed:
+          type: string
+        laterContext:
+          type: string
+        earlierContext:
+          type: string
+    TripModel_from_1_coord:
+      required:
+      - latAs1E5
+      - latAs1E6
+      - latAsDouble
+      - lonAs1E5
+      - lonAs1E6
+      - lonAsDouble
+      type: object
+      properties:
+        lonAs1E6:
+          type: number
+        latAs1E6:
+          type: number
+        latAs1E5:
+          type: number
+        lonAs1E5:
+          type: number
+        latAsDouble:
+          type: number
+        lonAsDouble:
+          type: number
+    TripModel_from_1:
+      required:
+      - coord
+      - id
+      - identified
+      - latAs1E6
+      - latAsDouble
+      - lonAs1E6
+      - lonAsDouble
+      - name
+      - place
+      - products
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        coord:
+          $ref: '#/components/schemas/TripModel_from_1_coord'
+        name:
+          type: string
+        products:
+          type: array
+          items:
+            type: string
+        lonAs1E6:
+          type: number
+        latAs1E6:
+          type: number
+        identified:
+          type: boolean
+        latAsDouble:
+          type: number
+        lonAsDouble:
+          type: number
+    TripModel_line_style:
+      required:
+      - backgroundColor
+      - backgroundColor2
+      - borderColor
+      - foregroundColor
+      - shape
+      type: object
+      properties:
+        shape:
+          type: string
+        backgroundColor:
+          type: number
+        backgroundColor2:
+          type: number
+        foregroundColor:
+          type: number
+        borderColor:
+          type: number
+    TripModel_line:
+      required:
+      - attrs
+      - id
+      - label
+      - message
+      - name
+      - network
+      - product
+      - style
+      type: object
+      properties:
+        network:
+          type: string
+        product:
+          type: string
+        label:
+          type: string
+        name:
+          type: string
+        style:
+          $ref: '#/components/schemas/TripModel_line_style'
+    TripModel_destination:
+      required:
+      - coord
+      - id
+      - identified
+      - latAs1E6
+      - latAsDouble
+      - lonAs1E6
+      - lonAsDouble
+      - name
+      - place
+      - products
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        lonAs1E6:
+          type: number
+        latAs1E6:
+          type: number
+        identified:
+          type: boolean
+        latAsDouble:
+          type: number
+        lonAsDouble:
+          type: number
+    TripModel_departureStop_plannedDeparturePosition:
+      required:
+      - name
+      - section
+      type: object
+      properties:
+        name:
+          type: string
+    TripModel_departureStop:
+      required:
+      - arrivalCancelled
+      - arrivalDelay
+      - arrivalPosition
+      - arrivalPositionPredicted
+      - arrivalTime
+      - arrivalTimePredicted
+      - departureCancelled
+      - departureDelay
+      - departurePosition
+      - departurePositionPredicted
+      - departureTime
+      - departureTimePredicted
+      - location
+      - maxTime
+      - minTime
+      - plannedArrivalPosition
+      - plannedArrivalTime
+      - plannedDeparturePosition
+      - plannedDepartureTime
+      - predictedArrivalPosition
+      - predictedArrivalTime
+      - predictedDeparturePosition
+      - predictedDepartureTime
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/TripModel_from_1'
+        arrivalCancelled:
+          type: boolean
+        plannedDepartureTime:
+          type: number
+        plannedDeparturePosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        departureCancelled:
+          type: boolean
+        departureTimePredicted:
+          type: boolean
+        departurePosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        departurePositionPredicted:
+          type: boolean
+        arrivalTimePredicted:
+          type: boolean
+        arrivalPositionPredicted:
+          type: boolean
+        departureTime:
+          type: number
+        minTime:
+          type: number
+    TripModel_arrivalStop:
+      required:
+      - arrivalCancelled
+      - arrivalDelay
+      - arrivalPosition
+      - arrivalPositionPredicted
+      - arrivalTime
+      - arrivalTimePredicted
+      - departureCancelled
+      - departureDelay
+      - departurePosition
+      - departurePositionPredicted
+      - departureTime
+      - departureTimePredicted
+      - location
+      - maxTime
+      - minTime
+      - plannedArrivalPosition
+      - plannedArrivalTime
+      - plannedDeparturePosition
+      - plannedDepartureTime
+      - predictedArrivalPosition
+      - predictedArrivalTime
+      - predictedDeparturePosition
+      - predictedDepartureTime
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/TripModel_from_1'
+        plannedArrivalTime:
+          type: number
+        plannedArrivalPosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        arrivalCancelled:
+          type: boolean
+        departureCancelled:
+          type: boolean
+        departureTimePredicted:
+          type: boolean
+        departurePositionPredicted:
+          type: boolean
+        arrivalTimePredicted:
+          type: boolean
+        arrivalPosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        arrivalPositionPredicted:
+          type: boolean
+        arrivalTime:
+          type: number
+        maxTime:
+          type: number
+    TripModel_intermediateStops:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/TripModel_from_1'
+        plannedArrivalTime:
+          type: number
+        plannedArrivalPosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        arrivalCancelled:
+          type: boolean
+        plannedDepartureTime:
+          type: number
+        plannedDeparturePosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        departureCancelled:
+          type: boolean
+        departureTimePredicted:
+          type: boolean
+        departurePosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        departurePositionPredicted:
+          type: boolean
+        arrivalTimePredicted:
+          type: boolean
+        arrivalPosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        arrivalPositionPredicted:
+          type: boolean
+        departureTime:
+          type: number
+        arrivalTime:
+          type: number
+        maxTime:
+          type: number
+        minTime:
+          type: number
+    TripModel_legs:
+      type: object
+      properties:
+        departure:
+          $ref: '#/components/schemas/TripModel_from_1'
+        arrival:
+          $ref: '#/components/schemas/TripModel_from_1'
+        line:
+          $ref: '#/components/schemas/TripModel_line'
+        destination:
+          $ref: '#/components/schemas/TripModel_destination'
+        departureStop:
+          $ref: '#/components/schemas/TripModel_departureStop'
+        arrivalStop:
+          $ref: '#/components/schemas/TripModel_arrivalStop'
+        intermediateStops:
+          type: array
+          items:
+            $ref: '#/components/schemas/TripModel_intermediateStops'
+        departureTimePredicted:
+          type: boolean
+        departurePosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        departurePositionPredicted:
+          type: boolean
+        arrivalTimePredicted:
+          type: boolean
+        arrivalPosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        arrivalPositionPredicted:
+          type: boolean
+        departureTime:
+          type: number
+        arrivalTime:
+          type: number
+        maxTime:
+          type: number
+        minTime:
+          type: number
+    TripModel_firstPublicLeg:
+      required:
+      - arrival
+      - arrivalDelay
+      - arrivalPosition
+      - arrivalPositionPredicted
+      - arrivalStop
+      - arrivalTime
+      - arrivalTimePredicted
+      - departure
+      - departureDelay
+      - departurePosition
+      - departurePositionPredicted
+      - departureStop
+      - departureTime
+      - departureTimePredicted
+      - destination
+      - intermediateStops
+      - line
+      - maxTime
+      - message
+      - minTime
+      type: object
+      properties:
+        departure:
+          $ref: '#/components/schemas/TripModel_from_1'
+        arrival:
+          $ref: '#/components/schemas/TripModel_from_1'
+        line:
+          $ref: '#/components/schemas/TripModel_line'
+        destination:
+          $ref: '#/components/schemas/TripModel_destination'
+        departureStop:
+          $ref: '#/components/schemas/TripModel_departureStop'
+        arrivalStop:
+          $ref: '#/components/schemas/TripModel_arrivalStop'
+        intermediateStops:
+          type: array
+          items:
+            $ref: '#/components/schemas/TripModel_intermediateStops'
+        departureTimePredicted:
+          type: boolean
+        departurePosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        departurePositionPredicted:
+          type: boolean
+        arrivalTimePredicted:
+          type: boolean
+        arrivalPosition:
+          $ref: '#/components/schemas/TripModel_departureStop_plannedDeparturePosition'
+        arrivalPositionPredicted:
+          type: boolean
+        departureTime:
+          type: number
+        arrivalTime:
+          type: number
+        maxTime:
+          type: number
+        minTime:
+          type: number
+    TripModel_trips:
+      type: object
+      properties:
+        id:
+          type: string
+        from:
+          $ref: '#/components/schemas/TripModel_from_1'
+        to:
+          $ref: '#/components/schemas/TripModel_from_1'
+        legs:
+          type: array
+          items:
+            $ref: '#/components/schemas/TripModel_legs'
+        numChanges:
+          type: number
+        firstDepartureTime:
+          type: number
+        firstPublicLeg:
+          $ref: '#/components/schemas/TripModel_firstPublicLeg'
+        firstPublicLegDepartureTime:
+          type: number
+        lastArrivalTime:
+          type: number
+        lastPublicLeg:
+          $ref: '#/components/schemas/TripModel_firstPublicLeg'
+        lastPublicLegArrivalTime:
+          type: number
+        publicDuration:
+          type: number
+        travelable:
+          type: boolean
+        duration:
+          type: number
+        maxTime:
+          type: number
+        minTime:
+          type: number
+    LocationModel_location:
+      required:
+      - coord
+      - id
+      - identified
+      - latAs1E6
+      - latAsDouble
+      - lonAs1E6
+      - lonAsDouble
+      - name
+      - place
+      - products
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        coord:
+          $ref: '#/components/schemas/TripModel_from_1_coord'
+        place:
+          type: string
+        name:
+          type: string
+        products:
+          type: array
+          items:
+            type: string
+        lonAs1E6:
+          type: number
+        latAs1E6:
+          type: number
+        identified:
+          type: boolean
+        latAsDouble:
+          type: number
+        lonAsDouble:
+          type: number
+    LocationModel_suggestedLocations:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/LocationModel_location'
+        priority:
+          type: number
+    LocationModel_locations:
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        coord:
+          $ref: '#/components/schemas/TripModel_from_1_coord'
+        place:
+          type: string
+        name:
+          type: string
+        products:
+          type: array
+          items:
+            type: string
+        lonAs1E6:
+          type: number
+        latAs1E6:
+          type: number
+        identified:
+          type: boolean
+        latAsDouble:
+          type: number
+        lonAsDouble:
+          type: number
+    DepartureModel_departures:
+      type: object
+      properties:
+        plannedTime:
+          type: string
+        line:
+          $ref: '#/components/schemas/TripModel_line'
+        destination:
+          $ref: '#/components/schemas/LocationModel_location'
+        time:
+          type: string
+    DepartureModel_stationDepartures:
+      type: object
+      properties:
+        location:
+          $ref: '#/components/schemas/LocationModel_location'
+        departures:
+          type: array
+          items:
+            $ref: '#/components/schemas/DepartureModel_departures'
