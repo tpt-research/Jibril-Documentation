@@ -73,7 +73,24 @@ paths:
         explode: true
         schema:
           type: string
-          default: Rt
+          enum:
+          - DB
+          - BVG
+          - NVV_RMV
+          - AVVAachen
+          - NASA
+          - VBN
+          - VGS
+          - VMT
+          - INVG
+          - ZVV
+          - LU
+          - SNCB
+          - DSB
+          - AnachB
+          - ArrivaUK
+          - BART
+          - Irishrail
       responses:
         200:
           description: search results matching criteria
@@ -126,7 +143,24 @@ paths:
         explode: true
         schema:
           type: string
-          default: Rt
+          enum:
+          - DB
+          - BVG
+          - NVV_RMV
+          - AVVAachen
+          - NASA
+          - VBN
+          - VGS
+          - VMT
+          - INVG
+          - ZVV
+          - LU
+          - SNCB
+          - DSB
+          - AnachB
+          - ArrivaUK
+          - BART
+          - Irishrail
       responses:
         200:
           description: search results matching criteria
@@ -197,7 +231,24 @@ paths:
         explode: true
         schema:
           type: string
-          default: Rt
+          enum:
+          - DB
+          - BVG
+          - NVV_RMV
+          - AVVAachen
+          - NASA
+          - VBN
+          - VGS
+          - VMT
+          - INVG
+          - ZVV
+          - LU
+          - SNCB
+          - DSB
+          - AnachB
+          - ArrivaUK
+          - BART
+          - Irishrail
       responses:
         200:
           description: search results matching criteria
@@ -258,6 +309,10 @@ paths:
         schema:
           type: string
           default: NEUTRAL
+          enum:
+          - NEUTRAL
+          - LIMITED
+          - BARRIER_FREE
       - name: optimization
         in: query
         description: optimize your trip by different needs
@@ -267,6 +322,10 @@ paths:
         schema:
           type: string
           default: LEAST_DURATION
+          enum:
+          - LEAST_DURATION
+          - LEAST_CHANGES
+          - LEAST_WALKING
       - name: walkspeed
         in: query
         description: set how fast the user can walk to next station
@@ -276,6 +335,10 @@ paths:
         schema:
           type: string
           default: NORMAL
+          enum:
+          - NORMAL
+          - SLOW
+          - FAST
       - name: source
         in: query
         description: set your data source
@@ -284,7 +347,24 @@ paths:
         explode: true
         schema:
           type: string
-          default: Rt
+          enum:
+          - DB
+          - BVG
+          - NVV_RMV
+          - AVVAachen
+          - NASA
+          - VBN
+          - VGS
+          - VMT
+          - INVG
+          - ZVV
+          - LU
+          - SNCB
+          - DSB
+          - AnachB
+          - ArrivaUK
+          - BART
+          - Irishrail
       responses:
         200:
           description: search results matching criteria
@@ -345,6 +425,10 @@ paths:
         schema:
           type: string
           default: NEUTRAL
+          enum:
+          - NEUTRAL
+          - LIMITED
+          - BARRIER_FREE
       - name: optimization
         in: query
         description: optimize your trip by different needs
@@ -354,6 +438,10 @@ paths:
         schema:
           type: string
           default: LEAST_DURATION
+          enum:
+          - LEAST_DURATION
+          - LEAST_CHANGES
+          - LEAST_WALKING
       - name: walkspeed
         in: query
         description: set how fast the user can walk to next station
@@ -363,6 +451,10 @@ paths:
         schema:
           type: string
           default: NORMAL
+          enum:
+          - NORMAL
+          - SLOW
+          - FAST
       - name: source
         in: query
         description: set your data source
@@ -371,7 +463,24 @@ paths:
         explode: true
         schema:
           type: string
-          default: Rt
+          enum:
+          - DB
+          - BVG
+          - NVV_RMV
+          - AVVAachen
+          - NASA
+          - VBN
+          - VGS
+          - VMT
+          - INVG
+          - ZVV
+          - LU
+          - SNCB
+          - DSB
+          - AnachB
+          - ArrivaUK
+          - BART
+          - Irishrail
       responses:
         200:
           description: search results matching criteria
