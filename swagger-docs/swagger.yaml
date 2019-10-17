@@ -207,7 +207,7 @@ paths:
     get:
       tags:
       - TPTService
-      summary: Trip via names
+      summary: Trip search by name
       description: By passing two names, you will get a trip based on it
       operationId: tripName
       parameters:
@@ -294,7 +294,7 @@ paths:
     get:
       tags:
       - TPTService
-      summary: Trip via IDs
+      summary: Trip search by id
       description: By passing two ids, you will get a trip based on it
       operationId: tripId
       parameters:
