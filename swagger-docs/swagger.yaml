@@ -20,7 +20,7 @@ paths:
     get:
       tags:
       - TPTService
-      summary: Departures
+      summary: get current departures
       description: By passing a station ID to the endpoint, you get the newest departures.
       operationId: getDepartures
       parameters:
@@ -83,7 +83,7 @@ paths:
     get:
       tags:
       - TPTService
-      summary: Location suggest
+      summary: suggest locations based on query
       description: By passing a value to the query, you will get a list of locations
       operationId: suggestLocations
       parameters:
@@ -136,7 +136,7 @@ paths:
     get:
       tags:
       - TPTService
-      summary: Location nearby
+      summary: suggest locations based on geocoords
       description: By passing geocoords, you will get a list of locations
       operationId: nearbyLocations
       parameters:
@@ -207,7 +207,7 @@ paths:
     get:
       tags:
       - TPTService
-      summary: Trip via names
+      summary: get a trip based on two names
       description: By passing two names, you will get a trip based on it
       operationId: tripName
       parameters:
@@ -294,7 +294,7 @@ paths:
     get:
       tags:
       - TPTService
-      summary: Trip via IDs
+      summary: get a trip based on two ids
       description: By passing two ids, you will get a trip based on it
       operationId: tripId
       parameters:
