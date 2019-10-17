@@ -15,6 +15,8 @@ servers:
 tags:
 - name: TPTService
   description: Operations for the main service (TPTService)
+- name: AlertService
+  description: Operations for the alert service, to get alerts from bahn.de
 paths:
   /departure:
     get:
@@ -377,6 +379,22 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TripModel'
+  /alert:
+    get:
+      tags:
+      - AlertService
+      summary: Alerts
+      description: By calling the endpoint, you get the newest alerts
+      operationId: getAlerts
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DepartureModel'
 components:
   schemas:
     TripModel:
@@ -438,6 +456,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DepartureModel_stationDepartures'
+    AlertModel:
+      required:
+      - message
+      - success
+      type: object
+      properties:
+        success:
+          type: string
+          example: "true"
+        message:
+          $ref: '#/components/schemas/AlertModel_message'
     TripModel_header:
       required:
       - context
@@ -1021,3 +1050,56 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DepartureModel_departures'
+    AlertModel_message_translations_en:
+      required:
+      - link
+      - message
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+          example: No Alerts
+        message:
+          type: string
+          example: null
+        link:
+          type: string
+          example: null
+    AlertModel_message_translations_de:
+      required:
+      - link
+      - message
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+          example: Kein Alarm
+        message:
+          type: string
+          example: null
+        link:
+          type: string
+          example: null
+    AlertModel_message_translations:
+      required:
+      - de
+      - en
+      type: object
+      properties:
+        en:
+          $ref: '#/components/schemas/AlertModel_message_translations_en'
+        de:
+          $ref: '#/components/schemas/AlertModel_message_translations_de'
+    AlertModel_message:
+      required:
+      - messageId
+      - translations
+      type: object
+      properties:
+        messageId:
+          type: number
+          example: 0
+        translations:
+          $ref: '#/components/schemas/AlertModel_message_translations'
