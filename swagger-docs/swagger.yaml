@@ -15,6 +15,10 @@ servers:
 tags:
 - name: TPTService
   description: Operations for the main service (TPTService)
+- name: AlertService
+  description: Operations for the alert service, to get alerts from bahn.de
+- name: SparpreisService
+  description: Operations for the Sparpreis service, to get Sparpreise by DB
 paths:
   /departure:
     get:
@@ -235,7 +239,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: dd.MM.yyyy'T'HH:mm:ss
+          example: 'Example: 06.01.2020T09:45:00'
       - name: products
         in: query
         description: set type of location
@@ -377,6 +381,64 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TripModel'
+  /alert:
+    get:
+      tags:
+      - AlertService
+      summary: Alerts
+      description: By calling the endpoint, you get the newest alerts
+      operationId: getAlerts
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AlertModel'
+  /sparpreise/:fromID/:toID/:when:
+    get:
+      tags:
+      - SparpreisService
+      summary: Sparpreis search by id
+      description: By passing a value to the query, you will get a list of locations
+      operationId: getSparpreise
+      parameters:
+      - name: :fromID
+        in: query
+        description: passes ID of start of trip
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: :toID
+        in: query
+        description: passes ID of start of trip
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: :when
+        in: query
+        description: passes date of trip
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: 'Example: 2019-02-01T09:00:22'
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SparpreisModel'
 components:
   schemas:
     TripModel:
@@ -438,6 +500,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DepartureModel_stationDepartures'
+    AlertModel:
+      required:
+      - message
+      - success
+      type: object
+      properties:
+        success:
+          type: string
+          example: "true"
+        message:
+          $ref: '#/components/schemas/AlertModel_message'
+    SparpreisModel:
+      required:
+      - message
+      - success
+      type: object
+      properties:
+        success:
+          type: string
+          example: "true"
+        message:
+          type: array
+          items:
+            $ref: '#/components/schemas/SparpreisModel_message'
     TripModel_header:
       required:
       - context
@@ -1021,3 +1107,203 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DepartureModel_departures'
+    AlertModel_message_translations_en:
+      required:
+      - link
+      - message
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+          example: No Alerts
+        message:
+          type: string
+          example: null
+        link:
+          type: string
+          example: null
+    AlertModel_message_translations_de:
+      required:
+      - link
+      - message
+      - title
+      type: object
+      properties:
+        title:
+          type: string
+          example: Kein Alarm
+        message:
+          type: string
+          example: null
+        link:
+          type: string
+          example: null
+    AlertModel_message_translations:
+      required:
+      - de
+      - en
+      type: object
+      properties:
+        en:
+          $ref: '#/components/schemas/AlertModel_message_translations_en'
+        de:
+          $ref: '#/components/schemas/AlertModel_message_translations_de'
+    AlertModel_message:
+      required:
+      - messageId
+      - translations
+      type: object
+      properties:
+        messageId:
+          type: number
+          example: 0
+        translations:
+          $ref: '#/components/schemas/AlertModel_message_translations'
+    SparpreisModel_origin:
+      required:
+      - id
+      - name
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: station
+        id:
+          type: string
+          example: "8000107"
+        name:
+          type: string
+          example: Freiburg(Brsg)Hbf
+    SparpreisModel_destination:
+      required:
+      - id
+      - name
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: station
+        id:
+          type: string
+          example: "8000261"
+        name:
+          type: string
+          example: München Hbf
+    SparpreisModel_destination_1:
+      required:
+      - id
+      - name
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: station
+        id:
+          type: string
+          example: "8000244"
+        name:
+          type: string
+          example: Mannheim Hbf
+    SparpreisModel_line:
+      required:
+      - id
+      - mode
+      - name
+      - product
+      - type
+      type: object
+      properties:
+        type:
+          type: string
+          example: line
+        id:
+          type: string
+          example: ice-278
+        name:
+          type: string
+          example: ICE  278
+        mode:
+          type: string
+          example: train
+        product:
+          type: string
+          example: ICE
+    SparpreisModel_legs:
+      type: object
+      properties:
+        origin:
+          $ref: '#/components/schemas/SparpreisModel_origin'
+        departure:
+          type: string
+          example: 2019-10-17T10:57:00.000Z
+        departurePlatform:
+          type: string
+          example: "1"
+        destination:
+          $ref: '#/components/schemas/SparpreisModel_destination_1'
+        arrival:
+          type: string
+          example: 2019-10-17T12:24:00.000Z
+        arrivalPlatform:
+          type: string
+          example: "2"
+        line:
+          $ref: '#/components/schemas/SparpreisModel_line'
+    SparpreisModel_price:
+      required:
+      - amount
+      - anyTrain
+      - currency
+      - description
+      - discount
+      - name
+      type: object
+      properties:
+        currency:
+          type: string
+          example: EUR
+        amount:
+          type: number
+          example: 102
+        discount:
+          type: boolean
+          example: false
+        name:
+          type: string
+          example: Flexpreis
+        description:
+          type: string
+          example: With an ICE ticket you can use all trains on the day of travel,
+            with an IC/EC ticket you can use any Intercity or Eurocity as well as
+            local trains. A 3-D Secure Code may be required for credit card payments.<br/>Cancellation
+            (exchange or refund) before the 1st day of validity free, thereafter 19,00
+            EUR.
+        anyTrain:
+          type: boolean
+          example: true
+    SparpreisModel_message:
+      type: object
+      properties:
+        type:
+          type: string
+          example: journey
+        id:
+          type: string
+          example: "0"
+        origin:
+          $ref: '#/components/schemas/SparpreisModel_origin'
+        destination:
+          $ref: '#/components/schemas/SparpreisModel_destination'
+        legs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SparpreisModel_legs'
+        price:
+          $ref: '#/components/schemas/SparpreisModel_price'
+        nightTrain:
+          type: boolean
+          example: false
