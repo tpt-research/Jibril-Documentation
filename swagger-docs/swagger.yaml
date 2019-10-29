@@ -2,7 +2,8 @@ openapi: 3.0.0
 info:
   title: The Public Transport API
   description: This is the API of The Public Transport. It's open for everyone and
-    does not need any APIKey or has any limits.
+    does not need any APIKey or has any limits. By using the API, you agree with our
+    [terms of use](https://api.thepublictransport.de/terms)
   contact:
     email: tristan@sqrls.de
   license:
@@ -10,7 +11,7 @@ info:
     url: https://creativecommons.org/licenses/by-sa/4.0/
   version: 1.0.0
 servers:
-- url: https://thepublictransport.de
+- url: https://api.thepublictransport.de
   description: The Public Transport server
 tags:
 - name: TPTService
@@ -290,7 +291,7 @@ paths:
         explode: true
         schema:
           type: string
-          example: 'Example: 06.01.2020T09:45:00'
+          example: 06.01.2020T09:45:00
       - name: products
         in: query
         description: set type of location
@@ -515,30 +516,30 @@ paths:
       operationId: getSparpreise
       parameters:
       - name: :fromID
-        in: query
+        in: path
         description: passes ID of start of trip
         required: true
-        style: form
-        explode: true
+        style: simple
+        explode: false
         schema:
           type: string
       - name: :toID
-        in: query
+        in: path
         description: passes ID of start of trip
         required: true
-        style: form
-        explode: true
+        style: simple
+        explode: false
         schema:
           type: string
       - name: :when
-        in: query
+        in: path
         description: passes date of trip
-        required: false
-        style: form
-        explode: true
+        required: true
+        style: simple
+        explode: false
         schema:
           type: string
-        example: 'Example: 2019-02-01T09:00:22'
+        example: 2019-02-01T09:00:22
       responses:
         200:
           description: search results matching criteria
