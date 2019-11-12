@@ -20,6 +20,8 @@ tags:
   description: Operations for the alert service, to get alerts from bahn.de
 - name: SparpreisService
   description: Operations for the Sparpreis service, to get Sparpreise by DB
+- name: FridaysForFutureService
+  description: Operations for the FridaysForFuture service. Shows newest demo places.
 paths:
   /departure:
     get:
@@ -549,6 +551,70 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SparpreisModel'
+  /fff/get:
+    get:
+      tags:
+      - FridaysForFutureService
+      summary: Get all demos by FFF
+      description: By passing a value to the query, you will get a list of demos
+      operationId: getDemos
+      responses:
+        200:
+          description: request succeed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FFFModel'
+  /fff/search/:parameter/:value:
+    get:
+      tags:
+      - FridaysForFutureService
+      summary: Get demos filtered by parameter & value by FFF
+      description: By passing a value to the query, you will get a list of filtered
+        demos
+      operationId: getDemosFiltered
+      parameters:
+      - name: :parameter
+        in: path
+        description: parameter you want to filter with
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          enum:
+          - Stadt
+          - Bundesland
+          - Name
+          - lang
+          - lat
+          - Uhrzeit
+          - Startpunkt
+          - Facebook event
+          - zusatzinfo
+          - Facebook
+          - Instagram
+          - Twitter
+          - website
+      - name: :value
+        in: path
+        description: search value
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FFFModel'
 components:
   schemas:
     TripModel:
@@ -634,6 +700,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SparpreisModel_message'
+    FFFModel:
+      required:
+      - message
+      - success
+      properties:
+        success:
+          type: string
+        message:
+          type: array
+          items:
+            $ref: '#/components/schemas/FFFModel_message'
     TripModel_header:
       required:
       - context
@@ -1417,3 +1494,32 @@ components:
         nightTrain:
           type: boolean
           example: false
+    FFFModel_message:
+      type: object
+      properties:
+        Stadt:
+          type: string
+        Bundesland:
+          type: string
+        Name:
+          type: string
+        lang:
+          type: string
+        lat:
+          type: string
+        Uhrzeit:
+          type: string
+        Startpunkt:
+          type: string
+        Facebook event:
+          type: string
+        zusatzinfo:
+          type: string
+        Facebook:
+          type: string
+        Instagram:
+          type: string
+        Twitter:
+          type: string
+        website:
+          type: string
