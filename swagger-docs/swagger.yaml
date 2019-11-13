@@ -2,8 +2,7 @@ openapi: 3.0.0
 info:
   title: The Public Transport API
   description: This is the API of The Public Transport. It's open for everyone and
-    does not need any APIKey or has any limits. By using the API, you agree with our
-    [terms of use](https://api.thepublictransport.de/terms)
+    does not need any APIKey or has any limits.
   contact:
     email: tristan@sqrls.de
   license:
@@ -551,11 +550,11 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SparpreisModel'
-  /fff/get:
+  /fff/v1/get:
     get:
       tags:
       - FridaysForFutureService
-      summary: Get all demos by FFF
+      summary: Get all demos by FFF V1
       description: By passing a value to the query, you will get a list of demos
       operationId: getDemos
       responses:
@@ -566,15 +565,79 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/FFFModel'
-  /fff/search/:parameter/:value:
+                  $ref: '#/components/schemas/FFFModel-Old'
+  /fff/v1/search/:parameter/:value:
     get:
       tags:
       - FridaysForFutureService
-      summary: Get demos filtered by parameter & value by FFF
+      summary: Get demos filtered by parameter & value by FFF V1
       description: By passing a value to the query, you will get a list of filtered
         demos
       operationId: getDemosFiltered
+      parameters:
+      - name: :parameter
+        in: path
+        description: parameter you want to filter with
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          enum:
+          - Stadt
+          - Bundesland
+          - Name
+          - lang
+          - lat
+          - Uhrzeit
+          - Startpunkt
+          - Facebook event
+          - zusatzinfo
+          - Facebook
+          - Instagram
+          - Twitter
+          - website
+      - name: :value
+        in: path
+        description: search value
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        200:
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FFFModel-Old'
+  /fff/v2/get:
+    get:
+      tags:
+      - FridaysForFutureService
+      summary: Get all demos by FFF V2
+      description: By passing a value to the query, you will get a list of demos
+      operationId: getDemosV2
+      responses:
+        200:
+          description: request succeed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FFFModel'
+  /fff/v2/search/:parameter/:value:
+    get:
+      tags:
+      - FridaysForFutureService
+      summary: Get demos filtered by parameter & value by FFF V2
+      description: By passing a value to the query, you will get a list of filtered
+        demos
+      operationId: getDemosFilteredV2
       parameters:
       - name: :parameter
         in: path
@@ -700,6 +763,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SparpreisModel_message'
+    FFFModel-Old:
+      required:
+      - message
+      - success
+      properties:
+        success:
+          type: string
+        message:
+          type: array
+          items:
+            $ref: '#/components/schemas/FFFModelOld_message'
     FFFModel:
       required:
       - message
@@ -1494,7 +1568,7 @@ components:
         nightTrain:
           type: boolean
           example: false
-    FFFModel_message:
+    FFFModelOld_message:
       type: object
       properties:
         Stadt:
@@ -1520,6 +1594,35 @@ components:
         Instagram:
           type: string
         Twitter:
+          type: string
+        website:
+          type: string
+    FFFModel_message:
+      type: object
+      properties:
+        lat:
+          type: string
+        lon:
+          type: string
+        full_info:
+          type: string
+        time:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        start:
+          type: string
+        additionals:
+          type: string
+        facebook:
+          type: string
+        facebook_event:
+          type: string
+        twitter:
+          type: string
+        instagram:
           type: string
         website:
           type: string
